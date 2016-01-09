@@ -1,0 +1,19 @@
+{
+  "name": "appleofmyiframe",
+  "main": "appleofmyiframe.js",
+  "homepage": "https://github.com/premasagar/appleofmyiframe",
+  "description": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery.browser": "~0.1.0",
+    "jquery": "1.12.0"
+  }
+}
