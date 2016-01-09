@@ -632,7 +632,10 @@
                     return head;
                 },
                 
-                body: function(contents, emptyFirst){
+                body: function(contents, emptyFirst, beforeScripts){
+                    if(typeof beforeScripts === "undefined") {
+                        beforeScripts = false;
+                    }
                     var body = this.$('body');
                     if (typeof contents !== 'undefined' && contents !== false){
                         if (body.length){ // TODO: Perhaps this should also check if the 'ready' event has ever fired - e.g. in situations where iframe has just been added to the DOM, but has not yet loaded
@@ -640,18 +643,32 @@
                                 this.empty();
                             }
                             if (contents){
-                                this.append(contents);
+                                if (beforeScripts) {
+                                    $(contents).insertBefore(this.$('body').children('script').first());
+                                } else {
+                                    this.append(contents);
+                                }
                             }
                         }
                         // Document not active because iframe out of the DOM. Defer till the next 'load' event.
                         else {
                             this.one('load', function(){
-                                this.body(contents, emptyFirst);
+                                this.body(contents, emptyFirst, beforeScripts);
                             });
                         }
                         return this;
                     }
                     return body;
+                },
+
+                bodyHtml: function(content, emptyFirst) {
+                    if(typeof emptyFirst === "undefined") {
+                        emptyFirst = false;
+                    }
+                    if (emptyFirst) {
+                        this.$('body').children(':not(script)').remove();
+                    }
+                    return this.body(content, false, true);
                 },
                 
                 title: function(title){
@@ -671,13 +688,12 @@
                         replace = false;
                     }
                     if (replace) {
-                        var head = this.$('head');
-                        $('style', head).remove();
+                        this.$('head').children('style').remove();
                     }
                     return this.head('<style>' + cssText + '</style>');
                 },
 
-                script: function(content, attributes, replace){
+                script: function(content, attributes, replace, loc){
                     if(typeof attributes === "undefined") {
                         attributes = {};
                     }
@@ -685,11 +701,21 @@
                         replace = false;
                     }
                     if (replace) {
-                        var head = this.$('head');
-                        $('script', head).remove();
+                        this.$(loc).children('script').remove();
                     }
+                    var elem = $('<script>' + content + '</script>').attr(attributes);
+                    if (loc == 'head') {
+                        return this.head(elem);
+                    } else {
+                        return this.body(elem, false, false);
+                    }
+                },
 
-                    return this.head($('<script>' + content + '</script>').attr(attributes));
+                headScript: function(content, attributes, replace){
+                    return this.script(content, attributes, replace, 'head');
+                },
+                bodyScript: function(content, attributes, replace){
+                    return this.script(content, attributes, replace, 'body');
                 },
             
                 // TODO: If bodyChildren is a block-level element (e.g. a div) then, unless specific css has been applied, its width will stretch to fill the body element which, by default, is a set size in iframe documents (e.g. 300px wide in Firefox 3.5). Is there a way to determine the width of the body contents, as they would be on their own? E.g. by temporarily setting the direct children to have display:inline (which feels hacky, but might just work).
