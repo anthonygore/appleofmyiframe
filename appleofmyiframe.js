@@ -666,7 +666,14 @@
                     return this.$().attr('title');
                 },
                 
-                style: function(cssText){
+                style: function(cssText, replace){
+                    if(typeof replace === "undefined") {
+                        replace = false;
+                    }
+                    if (replace) {
+                        var head = this.$('head');
+                        $('style', head).remove();
+                    }
                     return this.head('<style>' + cssText + '</style>');
                 },
             
