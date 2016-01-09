@@ -676,6 +676,21 @@
                     }
                     return this.head('<style>' + cssText + '</style>');
                 },
+
+                script: function(content, attributes, replace){
+                    if(typeof attributes === "undefined") {
+                        attributes = {};
+                    }
+                    if(typeof replace === "undefined") {
+                        replace = false;
+                    }
+                    if (replace) {
+                        var head = this.$('head');
+                        $('script', head).remove();
+                    }
+
+                    return this.head($('<script>' + content + '</script>').attr(attributes));
+                },
             
                 // TODO: If bodyChildren is a block-level element (e.g. a div) then, unless specific css has been applied, its width will stretch to fill the body element which, by default, is a set size in iframe documents (e.g. 300px wide in Firefox 3.5). Is there a way to determine the width of the body contents, as they would be on their own? E.g. by temporarily setting the direct children to have display:inline (which feels hacky, but might just work).
                 
