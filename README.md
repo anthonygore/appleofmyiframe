@@ -15,7 +15,9 @@ Modified methods
 
 `style(cssText, [,replace])`
 
-*replace*
-Type: boolean
-Indicates if the CSS being added should replace any previously added CSS. False by default.
+**replace**  
+Type: boolean  
+Indicates if the CSS being added should replace any previously added CSS. False by default.  
+
+
 
